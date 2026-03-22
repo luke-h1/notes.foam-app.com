@@ -1,0 +1,58 @@
+---
+import '../styles/global.css';
+
+type Props = {
+  title?: string;
+  description?: string;
+};
+
+const {
+  title = 'Foam Notes',
+  description = 'Short links for quick notes. Paste, share, delete.',
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <script is:inline>
+      (function () {
+        try {
+          var raw = localStorage.getItem('foam-note-prefs');
+          var theme = 'system';
+          if (raw) {
+            try {
+              var p = JSON.parse(raw);
+              if (p && typeof p.theme === 'string') theme = p.theme;
+            } catch (e) {}
+          }
+          var root = document.documentElement;
+          if (theme === 'dark') root.classList.add('dark');
+          else if (theme === 'light') root.classList.remove('dark');
+          else {
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches)
+              root.classList.add('dark');
+            else root.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body
+    class="min-h-full bg-zinc-50 text-zinc-900 antialiased transition-colors dark:bg-zinc-950 dark:text-zinc-100"
+  >
+    <slot />
+  </body>
+</html>

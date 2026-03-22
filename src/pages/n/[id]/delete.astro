@@ -1,0 +1,25 @@
+---
+export const prerender = false;
+
+import Layout from '../../../layouts/Layout.astro';
+import { DeleteNoteClient } from '../../../components/notes/DeleteNoteClient';
+import { isValidNoteId } from '../../../lib/validate';
+
+const { id } = Astro.params;
+const token = Astro.url.searchParams.get('token');
+
+if (!isValidNoteId(id)) {
+  return Astro.redirect('/');
+}
+---
+
+<Layout title="Delete note">
+  <div class="mx-auto max-w-md px-4 py-16 sm:py-24">
+    <h1 class="text-xl font-semibold text-zinc-900 dark:text-white">Delete note</h1>
+    <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+      This removes the note from the server permanently. The short id is{' '}
+      <span class="font-mono text-violet-600 dark:text-violet-400">/n/{id}</span>
+    </p>
+    <DeleteNoteClient client:load noteId={id!} initialToken={token} />
+  </div>
+</Layout>
