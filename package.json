@@ -13,7 +13,8 @@
     "astro": "astro",
     "generate-types": "wrangler types",
     "db:migrate:local": "wrangler d1 migrations apply notes-db --local",
-    "db:migrate:remote": "wrangler d1 migrations apply notes-db --remote"
+    "db:migrate:remote": "wrangler d1 migrations apply notes-db --remote",
+    "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.1.3",

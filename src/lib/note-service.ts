@@ -4,11 +4,13 @@ import {
   createDeleteToken,
   createNoteId,
 } from './ids';
+import { isUniqueConstraintError } from './d1-helpers';
 import {
   DELETE_TOKEN_LENGTH,
   MAX_NOTE_BYTES,
   NOTE_ID_LENGTH,
 } from './constants';
+import { timingSafeEqualString } from './timing-safe-equal';
 
 export type NoteRow = {
   id: string;
@@ -47,8 +49,10 @@ export async function createNote(
         .bind(id, trimmed, createdAt, deleteToken)
         .run();
       return { id, deleteToken };
-    } catch {
-      // Rare id or delete_token collision; retry
+    } catch (e) {
+      if (isUniqueConstraintError(e)) continue;
+      console.error('[notes] insert failed', e);
+      return { error: 'Could not save note', status: 503 };
     }
   }
   return { error: 'Could not allocate a unique id', status: 503 };
@@ -77,7 +81,8 @@ export async function deleteNote(
     .bind(id)
     .first<{ delete_token: string }>();
   if (!existing) return 'not_found';
-  if (existing.delete_token !== deleteToken) return 'forbidden';
+  if (!timingSafeEqualString(existing.delete_token, deleteToken))
+    return 'forbidden';
   await db.prepare(`DELETE FROM notes WHERE id = ?`).bind(id).run();
   return 'ok';
 }

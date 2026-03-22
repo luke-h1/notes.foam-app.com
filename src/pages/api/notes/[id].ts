@@ -3,7 +3,7 @@ import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
 
 import { deleteNote, getNote } from '../../../lib/note-service';
-import { isValidNoteId } from '../../../lib/validate';
+import { isValidDeleteToken, isValidNoteId } from '../../../lib/validate';
 
 export const prerender = false;
 
@@ -33,9 +33,9 @@ export const DELETE: APIRoute = async ({ params, request }) => {
 
   const url = new URL(request.url);
   const token = url.searchParams.get('token');
-  if (!token) {
+  if (!isValidDeleteToken(token)) {
     return Response.json(
-      { error: 'Missing delete token (query param "token")' },
+      { error: 'Missing or invalid delete token (query param "token")' },
       { status: 400 },
     );
   }

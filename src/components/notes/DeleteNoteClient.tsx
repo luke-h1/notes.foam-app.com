@@ -15,7 +15,7 @@ export function DeleteNoteClient({ noteId, initialToken }: Props) {
 
   const submit = useCallback(async () => {
     setError(null);
-    const t = token.trim();
+    const t = token.trim().replace(/\s+/g, '');
     if (!t) {
       setError('Paste your delete token or open the delete link you saved.');
       return;
