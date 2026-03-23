@@ -8,7 +8,6 @@ import { createNote } from '../../lib/note-service';
 
 export const prerender = false;
 
-/** Browsers send Sec-Fetch-Site; omitting it allows non-browser clients (curl, monitoring). */
 function isBrowserCrossSitePost(request: Request): boolean {
   return request.headers.get('sec-fetch-site') === 'cross-site';
 }

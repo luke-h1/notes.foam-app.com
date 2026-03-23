@@ -1,6 +1,3 @@
-/**
- * Prefer Cloudflare visitor scheme when present so generated links match the public URL.
- */
 export function getPublicOrigin(request: Request): string {
   const url = new URL(request.url);
   const cfVisitor = request.headers.get('cf-visitor');
@@ -10,9 +7,7 @@ export function getPublicOrigin(request: Request): string {
       if (parsed.scheme === 'http' || parsed.scheme === 'https') {
         return `${parsed.scheme}://${url.host}`;
       }
-    } catch {
-      /* ignore */
-    }
+    } catch {}
   }
   const forwardedProto = request.headers.get('x-forwarded-proto');
   if (forwardedProto === 'http' || forwardedProto === 'https') {

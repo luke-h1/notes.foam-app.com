@@ -1,12 +1,12 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState } from "react";
 
-import { createNoteRequest, deleteNoteRequest } from '../../lib/client-api';
-import { useNoteHistory, previewFromContent } from '../../hooks/useNoteHistory';
-import { usePreferences } from '../../hooks/usePreferences';
-import { HistoryList } from './HistoryList';
-import { NoteComposer } from './NoteComposer';
-import { SettingsPanel } from './SettingsPanel';
-import { ShareLinksCard } from './ShareLinksCard';
+import { createNoteRequest, deleteNoteRequest } from "../../lib/client-api";
+import { useNoteHistory, previewFromContent } from "../../hooks/useNoteHistory";
+import { usePreferences } from "../../hooks/usePreferences";
+import { HistoryList } from "./HistoryList";
+import { NoteComposer } from "./NoteComposer";
+import { SettingsPanel } from "./SettingsPanel";
+import { ShareLinksCard } from "./ShareLinksCard";
 
 export function NotesHome() {
   const { prefs, setPrefs } = usePreferences();
@@ -14,7 +14,7 @@ export function NotesHome() {
     prefs.rememberHistory,
   );
 
-  const [draft, setDraft] = useState('');
+  const [draft, setDraft] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -30,7 +30,7 @@ export function NotesHome() {
       const preview = previewFromContent(draft);
       const res = await createNoteRequest(draft);
       setLastCreated({ noteUrl: res.url, deleteUrl: res.deleteUrl });
-      setDraft('');
+      setDraft("");
       if (prefs.rememberHistory) {
         pushEntry({
           id: res.id,
@@ -40,7 +40,7 @@ export function NotesHome() {
         });
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Something went wrong');
+      setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {
       setBusy(false);
     }
@@ -53,7 +53,7 @@ export function NotesHome() {
         await deleteNoteRequest(id, deleteToken);
         removeById(id);
       } catch (e) {
-        setError(e instanceof Error ? e.message : 'Delete failed');
+        setError(e instanceof Error ? e.message : "Delete failed");
       }
     },
     [removeById],
@@ -67,7 +67,8 @@ export function NotesHome() {
             Foam Notes
           </h1>
           <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-            Short links for quick notes — share one URL, keep a private delete link.
+            Short links for quick notes — share one URL, keep a private delete
+            link.
           </p>
         </div>
         <button
@@ -106,7 +107,8 @@ export function NotesHome() {
                 This browser
               </h2>
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                Forget removes from the list. Delete removes the note from the server.
+                Forget removes from the list. Delete removes the note from the
+                server.
               </p>
             </div>
             {entries.length > 0 ? (
@@ -129,13 +131,13 @@ export function NotesHome() {
 
       <footer className="mt-16 border-t border-zinc-200 pt-8 text-center text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-500">
         <p>
-          Self-hosted friendly ·{' '}
+          Self-hosted friendly ·{" "}
           <a
             href="https://developers.cloudflare.com/d1/"
             className="text-violet-600 hover:underline dark:text-violet-400"
           >
             Cloudflare D1
-          </a>{' '}
+          </a>{" "}
           for storage
         </p>
       </footer>

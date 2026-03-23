@@ -36,7 +36,7 @@ const {
             try {
               var p = JSON.parse(raw);
               if (p && typeof p.theme === 'string') theme = p.theme;
-            } catch (e) {}
+            } catch {}
           }
           var root = document.documentElement;
           if (theme === 'dark') root.classList.add('dark');
@@ -46,7 +46,7 @@ const {
               root.classList.add('dark');
             else root.classList.remove('dark');
           }
-        } catch (e) {}
+        } catch {}
       })();
     </script>
   </head>

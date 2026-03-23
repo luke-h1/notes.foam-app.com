@@ -13,9 +13,7 @@ export function NoteCopyBar({ noteUrl, noteId }: Props) {
       await navigator.clipboard.writeText(noteUrl);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
-    } catch {
-      /* ignore */
-    }
+    } catch {}
   }, [noteUrl]);
 
   return (

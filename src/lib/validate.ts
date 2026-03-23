@@ -2,7 +2,6 @@ import { DELETE_TOKEN_LENGTH, NOTE_ID_LENGTH } from './constants';
 
 const NOTE_ID_RE = new RegExp(`^[a-z0-9]{${NOTE_ID_LENGTH}}$`);
 
-/** Reject pathological query strings while allowing future longer tokens. */
 const DELETE_TOKEN_MAX_CHARS = 128;
 
 export function isValidNoteId(id: string | undefined): id is string {

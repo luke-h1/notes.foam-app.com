@@ -1,6 +1,3 @@
-/**
- * Shared response headers for HTML and API (production-oriented defaults).
- */
 export function applyGlobalSecurityHeaders(headers: Headers): void {
   headers.set('X-Content-Type-Options', 'nosniff');
   headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
@@ -11,10 +8,6 @@ export function applyGlobalSecurityHeaders(headers: Headers): void {
   headers.set('X-Frame-Options', 'DENY');
 }
 
-/**
- * CSP: allows inline script in Layout for theme (FOUC). Tight otherwise.
- * Skipped in dev so Vite HMR / Astro tooling keep working.
- */
 export function applyContentSecurityPolicy(headers: Headers, dev: boolean): void {
   if (dev) return;
   const csp = [

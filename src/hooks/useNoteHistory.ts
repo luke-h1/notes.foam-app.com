@@ -30,9 +30,7 @@ function isHistoryEntry(x: unknown): x is HistoryEntry {
 function writeHistory(entries: HistoryEntry[]) {
   try {
     localStorage.setItem(HISTORY_KEY, JSON.stringify(entries));
-  } catch {
-    /* ignore */
-  }
+  } catch {}
 }
 
 export function previewFromContent(content: string, maxLen = 80): string {
@@ -77,9 +75,7 @@ export function useNoteHistory(remember: boolean) {
     setEntries([]);
     try {
       localStorage.removeItem(HISTORY_KEY);
-    } catch {
-      /* ignore */
-    }
+    } catch {}
   }, []);
 
   return { entries, pushEntry, removeById, clear };

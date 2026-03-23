@@ -69,9 +69,7 @@ export function usePreferences() {
       const next = { ...prev, ...update };
       try {
         localStorage.setItem(PREFS_KEY, JSON.stringify(next));
-      } catch {
-        /* ignore quota */
-      }
+      } catch {}
       if (update.theme !== undefined) {
         applyThemeClass(next.theme);
       }
