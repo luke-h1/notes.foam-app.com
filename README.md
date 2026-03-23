@@ -2,27 +2,30 @@
 
 Short public links for plain-text notes on [Cloudflare Workers](https://developers.cloudflare.com/workers/) with [D1](https://developers.cloudflare.com/d1/) (SQLite).
 
+Uses [Bun](https://bun.sh/) for installs and scripts (`packageManager` in `package.json`).
+
 ## Commands
 
 | Command | Action |
 | --- | --- |
-| `npm run dev` | Dev server (workerd + local D1) |
-| `npm run build` | Production build |
-| `npm run check` | `astro check` (CI runs this) |
-| `npm run deploy` | `build` + `wrangler deploy` |
-| `npm run db:migrate:local` | Apply SQL migrations to local D1 |
-| `npm run db:migrate:remote` | Apply migrations to production D1 |
-| `npm run generate-types` | Regenerate `worker-configuration.d.ts` after changing `wrangler.jsonc` |
+| `bun install` | Install dependencies |
+| `bun run dev` | Dev server (workerd + local D1) |
+| `bun run build` | Production build |
+| `bun run check` | `astro check` (CI runs this) |
+| `bun run deploy` | `build` + `wrangler deploy` |
+| `bun run db:migrate:local` | Apply SQL migrations to local D1 |
+| `bun run db:migrate:remote` | Apply migrations to production D1 |
+| `bun run generate-types` | Regenerate `worker-configuration.d.ts` after changing `wrangler.jsonc` |
 
 ## First-time D1 (production)
 
-1. Create a database: `npx wrangler d1 create notes-db`
+1. Create a database: `bunx wrangler d1 create notes-db`
 2. Put the returned `database_id` into `wrangler.jsonc` under `d1_databases[0].database_id`
-3. Run `npm run generate-types`
-4. Run `npm run db:migrate:remote`
-5. Deploy: `npm run deploy`
+3. Run `bun run generate-types`
+4. Run `bun run db:migrate:remote`
+5. Deploy: `bun run deploy`
 
-Local development: run `npm run db:migrate:local` once so the `notes` table exists.
+Local development: run `bun run db:migrate:local` once so the `notes` table exists.
 
 ## API
 
