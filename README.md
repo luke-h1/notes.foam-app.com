@@ -2,7 +2,7 @@
 
 Short public links for plain-text notes on [Cloudflare Workers](https://developers.cloudflare.com/workers/) with [D1](https://developers.cloudflare.com/d1/) (SQLite).
 
-Uses [Bun](https://bun.sh/) for installs and scripts (`packageManager` in `package.json`).
+Uses [Bun](https://bun.sh/) for installs and scripts (`packageManager` in `package.json`). **Astro 6** still expects **Node.js ≥ 22.12** on your `PATH` for `astro check` (and some tooling); upgrade with [nvm](https://github.com/nvm-sh/nvm) (`nvm use` picks up `.nvmrc`), [fnm](https://github.com/Schniz/fnm), or your OS package manager if `bun run check` complains.
 
 ## Commands
 
