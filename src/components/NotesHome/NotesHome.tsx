@@ -1,12 +1,11 @@
 import { useCallback, useState } from "react";
-
-import { createNoteRequest, deleteNoteRequest } from "../../lib/client-api";
-import { useNoteHistory, previewFromContent } from "../../hooks/useNoteHistory";
-import { usePreferences } from "../../hooks/usePreferences";
-import { HistoryList } from "./HistoryList";
-import { NoteComposer } from "./NoteComposer";
-import { SettingsPanel } from "./SettingsPanel";
-import { ShareLinksCard } from "./ShareLinksCard";
+import { HistoryList } from "@/components/HistoryList/HistoryList";
+import { NoteComposer } from "@/components/NoteComposer/NoteComposer";
+import { SettingsPanel } from "@/components/SettingsPanel/SettingsPanel";
+import { ShareLinksCard } from "@/components/ShareLinksCard/ShareLinksCard";
+import { useNoteHistory, previewFromContent } from "@/hooks/useNoteHistory";
+import { usePreferences } from "@/hooks/usePreferences";
+import { createNoteRequest, deleteNoteRequest } from "@/lib/client-api";
 
 export function NotesHome() {
   const { prefs, setPrefs } = usePreferences();
@@ -27,7 +26,8 @@ export function NotesHome() {
     setError(null);
     setBusy(true);
     try {
-      const preview = previewFromContent(draft);
+      const savedContent = draft.trim();
+      const preview = previewFromContent(savedContent);
       const res = await createNoteRequest(draft);
       setLastCreated({ noteUrl: res.url, deleteUrl: res.deleteUrl });
       setDraft("");
@@ -37,6 +37,7 @@ export function NotesHome() {
           deleteToken: res.deleteToken,
           createdAt: Date.now(),
           preview,
+          content: savedContent,
         });
       }
     } catch (e) {
@@ -107,8 +108,8 @@ export function NotesHome() {
                 This browser
               </h2>
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                Forget removes from the list. Delete removes the note from the
-                server.
+                Full text is shown below. Delete removes the server copy; open a
+                note page to copy the share link.
               </p>
             </div>
             {entries.length > 0 ? (
@@ -123,7 +124,6 @@ export function NotesHome() {
           </div>
           <HistoryList
             entries={entries}
-            onRemoveLocal={removeById}
             onDeleteRemote={handleDeleteRemote}
           />
         </section>

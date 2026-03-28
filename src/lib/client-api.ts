@@ -12,6 +12,7 @@ export async function createNoteRequest(
 ): Promise<CreateNoteResponse> {
   const res = await fetch('/api/notes', {
     method: 'POST',
+    credentials: 'same-origin',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ content }),
   });
@@ -35,8 +36,9 @@ export async function deleteNoteRequest(
   const q = new URLSearchParams({ token: deleteToken });
   const res = await fetch(`/api/notes/${encodeURIComponent(id)}?${q}`, {
     method: 'DELETE',
+    credentials: 'same-origin',
   });
-  if (res.status === 204) return;
+  if (res.status === 204) {return;}
   const data = (await res.json().catch(() => ({}))) as ApiErrorBody;
   const msg =
     typeof data.error === 'string' ? data.error : `Delete failed (${res.status})`;

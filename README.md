@@ -1,59 +1,38 @@
 # Foam Notes
 
-Short public links for plain-text notes on [Cloudflare Workers](https://developers.cloudflare.com/workers/) with [D1](https://developers.cloudflare.com/d1/) (SQLite).
-
-Uses [Bun](https://bun.sh/) for installs and scripts (`packageManager` in `package.json`). **Astro 6** still expects **Node.js ≥ 22.12** on your `PATH` for `astro check` (and some tooling); upgrade with [nvm](https://github.com/nvm-sh/nvm) (`nvm use` picks up `.nvmrc`), [fnm](https://github.com/Schniz/fnm), or your OS package manager if `bun run check` complains.
+Short public links for plain-text notes on [Cloudflare Workers](https://developers.cloudflare.com/workers/) with [D1](https://developers.cloudflare.com/d1/) (SQLite). Useful for quickly taking notes where you do not have access to your typical note taking services (notion etc.).
 
 ## Commands
 
-| Command | Action |
-| --- | --- |
-| `bun install` | Install dependencies |
-| `bun run dev` | Dev server (workerd + local D1) |
-| `bun run build` | Production build |
-| `bun run check` | `astro check` (CI runs this) |
-| `bun run deploy` | `build` + `wrangler deploy` |
-| `bun run db:migrate:local` | Apply SQL migrations to local D1 |
-| `bun run db:migrate:remote` | Apply migrations to production D1 |
-| `bun run generate-types` | Regenerate `worker-configuration.d.ts` after changing `wrangler.jsonc` |
+| Command                             | Action                                                                 |
+| ----------------------------------- | ---------------------------------------------------------------------- |
+| `bun install`                       | Install dependencies                                                   |
+| `bun run dev`                       | Dev server (workerd + local D1)                                        |
+| `bun run lint` / `bun run lint:fix` | ESLint                                                                 |
+| `bun run check`                     | `astro check`                                                          |
+| `bun run verify`                    | Lint, typecheck, and production build (used in CI)                     |
+| `bun run build`                     | Production build                                                       |
+| `bun run deploy`                    | `build` + `wrangler deploy`                                            |
+| `bun run db:migrate:local`          | Apply migrations to local D1                                           |
+| `bun run db:migrate:remote`         | Apply migrations to production D1                                      |
+| `bun run generate-types`            | Regenerate `worker-configuration.d.ts` after changing `wrangler.jsonc` |
 
-## First-time D1 (production)
+## Deploy to Cloudflare
 
 1. Create a database: `bunx wrangler d1 create notes-db`
 2. Put the returned `database_id` into `wrangler.jsonc` under `d1_databases[0].database_id`
-3. Run `bun run generate-types`
+3. Run `bun run generate-types` (code expects the D1 binding name in `wrangler.jsonc`, e.g. `notes_db` → `env.notes_db` in routes)
 4. Run `bun run db:migrate:remote`
 5. Deploy: `bun run deploy`
-
-Local development: run `bun run db:migrate:local` once so the `notes` table exists.
 
 ## API
 
 - `POST /api/notes` — body `{ "content": string }` → `{ id, deleteToken, url, deleteUrl }`
-- `GET /api/notes/:id` — JSON note payload
-- `DELETE /api/notes/:id?token=...` — same-origin `Origin` required (Astro CSRF)
-- `GET /api/health` — `{ status, checks }` for uptime probes (runs `SELECT 1` on D1)
+- `GET /api/notes/:id` — `{ id, content, createdAt }`; invalid/unknown id → **404** (`{ "error": "Not found" }`)
+- `DELETE /api/notes/:id?token=...` — **204** on success; wrong/missing token → **403** / **400**
+- `GET /api/health` — `{ "status": "ok" }`
 
-## Security & privacy (by design)
+## Deploy checklist
 
-- **Fetch metadata:** `POST /api/notes` returns `403` when `Sec-Fetch-Site: cross-site` (browser-driven CSRF reduction). Clients without `Sec-Fetch-*` (curl, workers, probes) are still allowed—pair with **rate limiting** at Cloudflare if the endpoint is public.
-- **Delete tokens:** Compared with constant-time equality vs the stored value.
-- **Headers:** Middleware sets `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-Frame-Options`, `Cache-Control: private, no-store` on `/n/*` and `/api/*`, `X-Robots-Tag: noindex` on `/n/*`, and a **Content-Security-Policy** in production (dev skips CSP so Vite HMR works).
-- **Robots:** `public/robots.txt` disallows `/n/` and `/api/` so well-behaved crawlers skip note URLs (not a secrecy guarantee).
-
-## Adapter settings
-
-- **`imageService: 'passthrough'`** — avoids requiring a Cloudflare Images binding when you are not using Astro image transforms.
-- **`session` driver `unstorage/drivers/null`** — avoids provisioning a `SESSION` KV namespace when this app does not use Astro sessions.
-
-## Operational checklist (before launch)
-
-- [ ] Replace placeholder D1 `database_id` and run remote migrations.
-- [ ] Turn on **Cloudflare rate limiting** (or WAF rules) for `POST /api/notes` if abuse is a concern.
-- [ ] Configure **custom domain** and confirm `getPublicOrigin()` (see `src/lib/request-origin.ts`) produces correct `url` / `deleteUrl` in API responses.
-- [ ] Optional: **Sentry** or Workers **Analytics** for error visibility (`console.error` is used for hard failures).
-- [ ] Optional: **terms of service** and content policy if notes are user-generated in production.
-
-## License
-
-MIT (same as dependencies; adjust as needed).
+- [✅] Set D1 `database_id`, run remote migrations, and `bun run generate-types`
+- [✅] Custom domain: `foam-app.com` on Cloudflare, no conflicting `notes` DNS record

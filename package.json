@@ -11,6 +11,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "check": "astro check",
+    "lint": "eslint \"src/**/*.{ts,tsx,astro}\" \"astro.config.mjs\" \"eslint.config.mjs\"",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx,astro}\" \"astro.config.mjs\" \"eslint.config.mjs\" --fix",
+    "verify": "bun run lint && bun run check && bun run build",
     "preview": "astro preview",
     "astro": "astro",
     "generate-types": "wrangler types",
@@ -33,6 +36,17 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
     "@cloudflare/workers-types": "^4.20260317.1",
-    "typescript": "^5.9.3"
+    "@eslint/js": "9.22.0",
+    "@types/node": "22",
+    "eslint": "9.22.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-astro": "^1.6.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "globals": "^17.4.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.57.2"
   }
 }

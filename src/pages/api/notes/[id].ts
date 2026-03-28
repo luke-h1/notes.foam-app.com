@@ -1,21 +1,28 @@
-import type { APIRoute } from 'astro';
-
-import { env } from 'cloudflare:workers';
-
-import { deleteNote, getNote } from '../../../lib/note-service';
-import { isValidDeleteToken, isValidNoteId } from '../../../lib/validate';
+import type { APIRoute } from "astro";
+import { env } from "cloudflare:workers";
+import { deleteNote, getNote } from "@/lib/note-service";
+import { enforceRateLimit, rateLimitResponse } from "@/lib/rate-limit";
+import { isValidDeleteToken, isValidNoteId } from "@/lib/validate";
 
 export const prerender = false;
 
-export const GET: APIRoute = async ({ params }) => {
-  const id = params.id;
-  if (!isValidNoteId(id)) {
-    return Response.json({ error: 'Invalid note id' }, { status: 400 });
+const notFoundJson = () =>
+  Response.json({ error: "Not found" }, { status: 404 });
+
+export const GET: APIRoute = async ({ params, request }) => {
+  const limit = await enforceRateLimit(env.notes_db, request, "note_read");
+  if (!limit.allowed) {
+    return rateLimitResponse(limit.retryAfterSec);
   }
 
-  const note = await getNote(env.DB, id);
+  const id = params.id;
+  if (!isValidNoteId(id)) {
+    return notFoundJson();
+  }
+
+  const note = await getNote(env.notes_db, id);
   if (!note) {
-    return Response.json({ error: 'Not found' }, { status: 404 });
+    return notFoundJson();
   }
 
   return Response.json({
@@ -26,13 +33,18 @@ export const GET: APIRoute = async ({ params }) => {
 };
 
 export const DELETE: APIRoute = async ({ params, request }) => {
+  const limit = await enforceRateLimit(env.notes_db, request, "note_read");
+  if (!limit.allowed) {
+    return rateLimitResponse(limit.retryAfterSec);
+  }
+
   const id = params.id;
   if (!isValidNoteId(id)) {
-    return Response.json({ error: 'Invalid note id' }, { status: 400 });
+    return notFoundJson();
   }
 
   const url = new URL(request.url);
-  const token = url.searchParams.get('token');
+  const token = url.searchParams.get("token");
   if (!isValidDeleteToken(token)) {
     return Response.json(
       { error: 'Missing or invalid delete token (query param "token")' },
@@ -40,12 +52,12 @@ export const DELETE: APIRoute = async ({ params, request }) => {
     );
   }
 
-  const outcome = await deleteNote(env.DB, id, token);
-  if (outcome === 'not_found') {
-    return Response.json({ error: 'Not found' }, { status: 404 });
+  const outcome = await deleteNote(env.notes_db, id, token);
+  if (outcome === "not_found") {
+    return notFoundJson();
   }
-  if (outcome === 'forbidden') {
-    return Response.json({ error: 'Invalid delete token' }, { status: 403 });
+  if (outcome === "forbidden") {
+    return Response.json({ error: "Invalid delete token" }, { status: 403 });
   }
 
   return new Response(null, { status: 204 });

@@ -1,11 +1,10 @@
-import { defineMiddleware } from 'astro:middleware';
-
+import { defineMiddleware } from "astro:middleware";
 import {
   applyContentSecurityPolicy,
   applyGlobalSecurityHeaders,
   applyNoIndex,
   applyPrivateNoStore,
-} from './lib/security-headers';
+} from "@/lib/security-headers";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   const response = await next();
@@ -15,11 +14,11 @@ export const onRequest = defineMiddleware(async (context, next) => {
   applyGlobalSecurityHeaders(headers);
   applyContentSecurityPolicy(headers, import.meta.env.DEV);
 
-  if (path.startsWith('/n/') || path.startsWith('/api/')) {
+  if (path.startsWith("/n/") || path.startsWith("/api/")) {
     applyPrivateNoStore(headers);
   }
 
-  if (path.startsWith('/n/')) {
+  if (path.startsWith("/n/")) {
     applyNoIndex(headers);
   }
 

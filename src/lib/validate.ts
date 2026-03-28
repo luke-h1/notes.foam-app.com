@@ -9,8 +9,8 @@ export function isValidNoteId(id: string | undefined): id is string {
 }
 
 export function isValidDeleteToken(token: string | null): token is string {
-  if (token === null || token === '') return false;
-  if (token.length > DELETE_TOKEN_MAX_CHARS) return false;
-  if (token.length !== DELETE_TOKEN_LENGTH) return false;
+  if (token === null || token === '') {return false;}
+  if (token.length > DELETE_TOKEN_MAX_CHARS) {return false;}
+  if (token.length !== DELETE_TOKEN_LENGTH) {return false;}
   return /^[A-Za-z0-9]+$/.test(token);
 }

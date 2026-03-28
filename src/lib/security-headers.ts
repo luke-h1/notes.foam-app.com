@@ -9,7 +9,7 @@ export function applyGlobalSecurityHeaders(headers: Headers): void {
 }
 
 export function applyContentSecurityPolicy(headers: Headers, dev: boolean): void {
-  if (dev) return;
+  if (dev) {return;}
   const csp = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline'",

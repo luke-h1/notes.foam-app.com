@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-
-import { PREFS_KEY } from '../lib/constants';
+import { PREFS_KEY } from "@/lib/constants";
 
 export type ThemePreference = 'light' | 'dark' | 'system';
 
@@ -15,10 +14,10 @@ const defaults: Preferences = {
 };
 
 function readPrefs(): Preferences {
-  if (typeof window === 'undefined') return defaults;
+  if (typeof window === 'undefined') {return defaults;}
   try {
     const raw = localStorage.getItem(PREFS_KEY);
-    if (!raw) return defaults;
+    if (!raw) {return defaults;}
     const p = JSON.parse(raw) as Partial<Preferences>;
     return {
       theme:
@@ -57,7 +56,7 @@ export function usePreferences() {
   }, []);
 
   useEffect(() => {
-    if (prefs.theme !== 'system') return;
+    if (prefs.theme !== 'system') {return;}
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
     const handler = () => applyThemeClass('system');
     mq.addEventListener('change', handler);

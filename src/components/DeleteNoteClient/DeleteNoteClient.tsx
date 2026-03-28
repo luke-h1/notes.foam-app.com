@@ -1,6 +1,5 @@
 import { useCallback, useState } from 'react';
-
-import { deleteNoteRequest } from '../../lib/client-api';
+import { deleteNoteRequest } from "@/lib/client-api";
 
 type Props = {
   noteId: string;

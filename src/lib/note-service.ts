@@ -1,16 +1,12 @@
-import type { D1Database } from '@cloudflare/workers-types';
-
-import {
-  createDeleteToken,
-  createNoteId,
-} from './ids';
-import { isUniqueConstraintError } from './d1-helpers';
+import type { D1Database } from "@cloudflare/workers-types";
 import {
   DELETE_TOKEN_LENGTH,
   MAX_NOTE_BYTES,
   NOTE_ID_LENGTH,
-} from './constants';
-import { timingSafeEqualString } from './timing-safe-equal';
+} from "./constants";
+import { isUniqueConstraintError } from "./d1-helpers";
+import { createDeleteToken, createNoteId } from "./ids";
+import { timingSafeEqualString } from "./timing-safe-equal";
 
 export type NoteRow = {
   id: string;
@@ -25,10 +21,12 @@ function utf8ByteLength(text: string): number {
 export async function createNote(
   db: D1Database,
   content: string,
-): Promise<{ id: string; deleteToken: string } | { error: string; status: number }> {
+): Promise<
+  { id: string; deleteToken: string } | { error: string; status: number }
+> {
   const trimmed = content.trim();
   if (!trimmed) {
-    return { error: 'Note cannot be empty', status: 400 };
+    return { error: "Note cannot be empty", status: 400 };
   }
   if (utf8ByteLength(trimmed) > MAX_NOTE_BYTES) {
     return {
@@ -50,12 +48,14 @@ export async function createNote(
         .run();
       return { id, deleteToken };
     } catch (e) {
-      if (isUniqueConstraintError(e)) continue;
-      console.error('[notes] insert failed', e);
-      return { error: 'Could not save note', status: 503 };
+      if (isUniqueConstraintError(e)) {
+        continue;
+      }
+      console.error("[notes] insert failed", e);
+      return { error: "Could not save note", status: 503 };
     }
   }
-  return { error: 'Could not allocate a unique id', status: 503 };
+  return { error: "Could not allocate a unique id", status: 503 };
 }
 
 export async function getNote(
@@ -63,9 +63,7 @@ export async function getNote(
   id: string,
 ): Promise<NoteRow | null> {
   const row = await db
-    .prepare(
-      `SELECT id, content, created_at FROM notes WHERE id = ?`,
-    )
+    .prepare(`SELECT id, content, created_at FROM notes WHERE id = ?`)
     .bind(id)
     .first<NoteRow>();
   return row ?? null;
@@ -75,14 +73,17 @@ export async function deleteNote(
   db: D1Database,
   id: string,
   deleteToken: string,
-): Promise<'ok' | 'not_found' | 'forbidden'> {
+): Promise<"ok" | "not_found" | "forbidden"> {
   const existing = await db
     .prepare(`SELECT delete_token FROM notes WHERE id = ?`)
     .bind(id)
     .first<{ delete_token: string }>();
-  if (!existing) return 'not_found';
-  if (!timingSafeEqualString(existing.delete_token, deleteToken))
-    return 'forbidden';
+  if (!existing) {
+    return "not_found";
+  }
+  if (!timingSafeEqualString(existing.delete_token, deleteToken)) {
+    return "forbidden";
+  }
   await db.prepare(`DELETE FROM notes WHERE id = ?`).bind(id).run();
-  return 'ok';
+  return "ok";
 }

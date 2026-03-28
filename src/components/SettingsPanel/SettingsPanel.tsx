@@ -1,4 +1,4 @@
-import type { Preferences, ThemePreference } from '../../hooks/usePreferences';
+import type { Preferences, ThemePreference } from "@/hooks/usePreferences";
 
 type Props = {
   open: boolean;
@@ -14,7 +14,9 @@ const themes: { value: ThemePreference; label: string }[] = [
 ];
 
 export function SettingsPanel({ open, onClose, prefs, onChange }: Props) {
-  if (!open) return null;
+  if (!open) {
+    return null;
+  }
 
   return (
     <div
@@ -23,7 +25,11 @@ export function SettingsPanel({ open, onClose, prefs, onChange }: Props) {
       aria-modal="true"
       aria-labelledby="settings-title"
       onClick={onClose}
-      onKeyDown={(e) => e.key === 'Escape' && onClose()}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") {
+          onClose();
+        }
+      }}
     >
       <div
         className="w-full max-w-md rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-900"

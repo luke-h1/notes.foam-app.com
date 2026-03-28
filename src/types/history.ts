@@ -3,4 +3,5 @@ export type HistoryEntry = {
   deleteToken: string;
   createdAt: number;
   preview: string;
+  content?: string;
 };

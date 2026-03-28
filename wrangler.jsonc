@@ -2,6 +2,12 @@
   "compatibility_date": "2026-03-17",
   "compatibility_flags": ["global_fetch_strictly_public"],
   "name": "foam-notes",
+  "routes": [
+    {
+      "pattern": "notes.foam-app.com",
+      "custom_domain": true,
+    },
+  ],
   "main": "@astrojs/cloudflare/entrypoints/server",
   "assets": {
     "directory": "./dist",
@@ -12,9 +18,9 @@
   },
   "d1_databases": [
     {
-      "binding": "DB",
+      "binding": "notes_db",
       "database_name": "notes-db",
-      "database_id": "00000000-0000-4000-8000-000000000001",
+      "database_id": "26d37e27-63ec-497e-bcb3-f09dfa9f2141",
     },
   ],
 }

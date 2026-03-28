@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type Props = {
   value: string;
@@ -21,32 +21,34 @@ export function NoteComposer({
 
   useEffect(() => {
     const onPaste = (ev: ClipboardEvent) => {
-      const text = ev.clipboardData?.getData('text/plain');
-      if (!text || !text.trim()) return;
+      const text = ev.clipboardData?.getData("text/plain");
+      if (!text || !text.trim()) {
+        return;
+      }
       ev.preventDefault();
       const prev = valueRef.current;
       onChange(
-        prev ? `${prev}${prev.endsWith('\n') ? '' : '\n'}${text}` : text,
+        prev ? `${prev}${prev.endsWith("\n") ? "" : "\n"}${text}` : text,
       );
     };
-    window.addEventListener('paste', onPaste);
-    return () => window.removeEventListener('paste', onPaste);
+    window.addEventListener("paste", onPaste);
+    return () => window.removeEventListener("paste", onPaste);
   }, [onChange]);
 
   const onDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
       setDragOver(false);
-      const text = e.dataTransfer.getData('text/plain');
+      const text = e.dataTransfer.getData("text/plain");
       if (text) {
         const prev = valueRef.current;
         onChange(
-          prev ? `${prev}${prev.endsWith('\n') ? '' : '\n'}${text}` : text,
+          prev ? `${prev}${prev.endsWith("\n") ? "" : "\n"}${text}` : text,
         );
         return;
       }
       const file = e.dataTransfer.files[0];
-      if (file && file.type.startsWith('text/')) {
+      if (file && file.type.startsWith("text/")) {
         void file.text().then((t) => {
           const prev = valueRef.current;
           onChange(prev ? `${prev}\n${t}` : t);
@@ -66,8 +68,8 @@ export function NoteComposer({
       onDrop={onDrop}
       className={`rounded-2xl border-2 border-dashed transition-colors ${
         dragOver
-          ? 'border-violet-500 bg-violet-50 dark:border-violet-400 dark:bg-violet-950/40'
-          : 'border-zinc-300 bg-zinc-50/50 dark:border-zinc-700 dark:bg-zinc-900/30'
+          ? "border-violet-500 bg-violet-50 dark:border-violet-400 dark:bg-violet-950/40"
+          : "border-zinc-300 bg-zinc-50/50 dark:border-zinc-700 dark:bg-zinc-900/30"
       }`}
     >
       <div className="p-4 pb-2">
@@ -99,7 +101,7 @@ export function NoteComposer({
             onClick={onSubmit}
             className="rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-violet-700 disabled:cursor-not-allowed disabled:bg-zinc-300 disabled:text-zinc-500 dark:disabled:bg-zinc-700 dark:disabled:text-zinc-500"
           >
-            {disabled ? 'Saving…' : 'Create short link'}
+            {disabled ? "Saving…" : "Create short link"}
           </button>
         </div>
       </div>
