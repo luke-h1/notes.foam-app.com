@@ -3,7 +3,7 @@ export const prerender = false;
 
 import { env } from "cloudflare:workers";
 
-import { NoteCopyBar } from "@/components/NoteCopyBar/NoteCopyBar";
+import { NoteCopyBar } from "./_NoteCopyBar";
 import { getNote } from "@/lib/note-service";
 import { isValidNoteId } from "@/lib/validate";
 import Layout from "../../layouts/Layout.astro";

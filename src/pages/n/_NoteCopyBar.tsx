@@ -25,8 +25,12 @@ export function NoteCopyBar({ noteUrl, noteId }: Props) {
     try {
       await navigator.clipboard.writeText(normalizeClipboardUrl(noteUrl));
       setCopied(true);
-      window.setTimeout(() => setCopied(false), 2000);
-    } catch {}
+      window.setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    } catch {
+      /* clipboard denied */
+    }
   }, [noteUrl]);
 
   const deleteNote = useCallback(async () => {
@@ -56,7 +60,9 @@ export function NoteCopyBar({ noteUrl, noteId }: Props) {
       <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
-          onClick={copy}
+          onClick={() => {
+            void copy();
+          }}
           className="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white"
         >
           {copied ? "Copied" : "Copy link"}
@@ -65,7 +71,9 @@ export function NoteCopyBar({ noteUrl, noteId }: Props) {
           <button
             type="button"
             disabled={deleting}
-            onClick={deleteNote}
+            onClick={() => {
+              void deleteNote();
+            }}
             className="rounded-lg bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60 dark:bg-red-700 dark:hover:bg-red-600"
           >
             {deleting ? "Deleting…" : "Delete note"}
