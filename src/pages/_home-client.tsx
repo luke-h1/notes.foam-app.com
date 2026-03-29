@@ -13,7 +13,10 @@ import {
   type ThemePreference,
 } from "@/hooks/usePreferences";
 import { createNoteRequest, deleteNoteRequest } from "@/lib/client-api";
-import { normalizeClipboardNoteBody, normalizeClipboardUrl } from "@/lib/clipboard";
+import {
+  normalizeClipboardNoteBody,
+  normalizeClipboardUrl,
+} from "@/lib/clipboard";
 import type { HistoryEntry } from "@/types/history";
 
 async function copyTextToClipboard(text: string): Promise<boolean> {
@@ -195,7 +198,10 @@ function NoteComposer(props: {
           className="min-h-[200px] w-full resize-y rounded-xl border border-zinc-200 bg-white p-4 text-base leading-relaxed text-zinc-900 shadow-sm outline-none ring-violet-500/0 transition-shadow focus:border-violet-400 focus:ring-4 focus:ring-violet-500/15 disabled:opacity-60 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-violet-500 dark:focus:ring-violet-400/20"
         />
         {error ? (
-          <p className="mt-2 text-sm text-red-600 dark:text-red-400" role="alert">
+          <p
+            className="mt-2 text-sm text-red-600 dark:text-red-400"
+            role="alert"
+          >
             {error}
           </p>
         ) : null}
@@ -566,25 +572,11 @@ export default function HomeClient() {
               </button>
             ) : null}
           </div>
-          <HistoryList
-            entries={entries}
-            onDeleteRemote={handleDeleteRemote}
-          />
+          <HistoryList entries={entries} onDeleteRemote={handleDeleteRemote} />
         </section>
       </main>
 
-      <footer className="mt-16 border-t border-zinc-200 pt-8 text-center text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-500">
-        <p>
-          Self-hosted friendly ·{" "}
-          <a
-            href="https://developers.cloudflare.com/d1/"
-            className="text-violet-600 hover:underline dark:text-violet-400"
-          >
-            Cloudflare D1
-          </a>{" "}
-          for storage
-        </p>
-      </footer>
+      <footer className="mt-16 border-t border-zinc-200 pt-8 text-center text-xs text-zinc-500 dark:border-zinc-800 dark:text-zinc-500" />
 
       <SettingsPanel
         open={settingsOpen}
